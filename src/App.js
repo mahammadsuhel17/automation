@@ -55,21 +55,20 @@ const App = () => {
 
               // console.log("sheetData==>", typeof(startDate), endDate, sd);
               await sheetData.map(async (val) => {
-
                 if (val?.Date && val?.Date !== "Total" && val[" Adjusted Billable Spend "] && val[" Adjusted Profit "]) {
-
                   const itemDateParts = val?.Date.split('-');
+                  const itemYear = new Date(fromDate).getFullYear() 
                   const itemMonth = itemDateParts[1].toLowerCase(); // Convert to lowercase for consistency
                   const itemDay = parseInt(itemDateParts[0]);
 
-                  const itemJavaScriptDate = new Date(`2023-${itemMonth}-${itemDay}`);
+                  const itemJavaScriptDate = new Date(`${itemYear}-${itemMonth}-${itemDay}`);
                   // console.log("itemJavaScriptDate", itemJavaScriptDate, startDate);
-
+                  // console.log("itemJavaScriptDate", itemYear, itemDateParts, `2023-${itemMonth}-${itemDay}`);
                   if (itemJavaScriptDate >= startDate && itemJavaScriptDate <= endDate) {
-                    console.log("itemJavaScriptDate", itemJavaScriptDate, startDate);
+                    console.log("itemJavaScriptDate",moment(new Date(val?.Date)).format("DD-MMM")  );
                     const finelData = {
                       "Spend Sheet Name": file?.name,
-                      "Date": val?.Date,
+                      "Date": moment(new Date(val?.Date)).format("DD-MMM"),
                       "Adjusted Billable Spend": val[" Adjusted Billable Spend "],
                       "Adjusted Profit": val[" Adjusted Profit "]
                     }
