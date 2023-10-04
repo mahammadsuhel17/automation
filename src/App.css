@@ -1,0 +1,64 @@
+.container{
+  max-width: 1180px;
+  margin-inline: auto;
+  /* overflow: hidden; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: aqua;
+  gap: 50px;
+  position: relative;
+}
+.datePickerView{
+  display: flex;
+}
+.datePicker{
+  border: 1px solid;
+  margin-left:10px;
+  height: 40px;
+  width: 150px;
+  padding-left: 10px;
+  font-size: 20px;
+}
+.fromData{
+  display: flex;
+  align-items: center;
+}
+.toDate{
+  margin-left: 100px;
+  display: flex;
+  align-items: center;
+}
+.file-upload {
+  text-align: center;
+  border: 3px dashed rgb(46, 47, 48);
+  padding: 1.5rem;
+  position: relative;
+  cursor: pointer;
+}
+.file-upload input {
+  display: block;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.exportButton{
+  height: 50px;
+  width: 150px;
+  border-radius: 5px;
+  background-color: rgb(44, 43, 43);
+  color: white;
+}
+.progressView{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
