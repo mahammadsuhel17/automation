@@ -34,29 +34,42 @@ const App = () => {
         const file = files[i];
         try {
           const data = await readFileAsync(file);
-          const workbook = XLSX.read(data, { type: 'binary', cellDates: true });
+          const workbook = XLSX.read(data, { type: 'binary' });
 
           // Assuming you want to convert the first sheet to JSON
           const sheetName = workbook.SheetNames;
           await sheetName.forEach(async (sheetName) => {
             if (sheetName === "TOTAL") {
               // console.log("sheetName==>jhjkghsjhG", sheetName);
-              const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-              //  console.log("sheetData==>", sheetData);
+              const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+                raw: false, // Interpret dates as JavaScript dates
+                dateNF: new Date(), // Format for parsing dates (adjust as needed)
+              });
+
               const data1 = []
+              const startDateOld = new Date(moment(fromDate).format('yyyy-MM-DD')); // October 1, 2023
+              const endDate = new Date(moment(toDate).format('yyyy-MM-DD'));
+
+              const oneDayMilliseconds = 24 * 60 * 60 * 1000; // 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
+              const startDate = new Date(startDateOld - oneDayMilliseconds);
+
+              // console.log("sheetData==>", typeof(startDate), endDate, sd);
               await sheetData.map(async (val) => {
-                if (val?.Date !== "Total" && val[" Adjusted Billable Spend "] && val[" Adjusted Profit "]) {
 
-                  const itemDate = new Date(moment(val?.Date).format("YYYY-MM-DD"))
+                if (val?.Date && val?.Date !== "Total" && val[" Adjusted Billable Spend "] && val[" Adjusted Profit "]) {
 
-                  const fromDate1 = new Date(moment(fromDate).format("YYYY-MM-DD"))
+                  const itemDateParts = val?.Date.split('-');
+                  const itemMonth = itemDateParts[1].toLowerCase(); // Convert to lowercase for consistency
+                  const itemDay = parseInt(itemDateParts[0]);
 
-                  const toDate1 = new Date(moment(toDate).format("YYYY-MM-DD"))
+                  const itemJavaScriptDate = new Date(`2023-${itemMonth}-${itemDay}`);
+                  // console.log("itemJavaScriptDate", itemJavaScriptDate, startDate);
 
-                  if (itemDate >= fromDate1 && itemDate <= toDate1) {
+                  if (itemJavaScriptDate >= startDate && itemJavaScriptDate <= endDate) {
+                    console.log("itemJavaScriptDate", itemJavaScriptDate, startDate);
                     const finelData = {
                       "Spend Sheet Name": file?.name,
-                      "Date": moment(val?.Date).format("DD-MMM"),
+                      "Date": val?.Date,
                       "Adjusted Billable Spend": val[" Adjusted Billable Spend "],
                       "Adjusted Profit": val[" Adjusted Profit "]
                     }
@@ -113,7 +126,7 @@ const App = () => {
     const worksheet = XLSX.utils.json_to_sheet(dd);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "DataSheet.xlsx", { type: 'binary', bookType: 'xlsx' });
+    XLSX.writeFile(workbook, "DataSheet.xlsx", { type: 'binary', bookType: 'xlsx', cellDates: true });
   }
 
   return (
@@ -164,7 +177,6 @@ const App = () => {
             {progress}
           </h1>
         </div>}
-      {showLoader && <LoadingSpinner />}
     </div>
   )
 }
