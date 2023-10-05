@@ -1,18 +1,26 @@
+.mainContainer{
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .container{
-  max-width: 1180px;
   margin-inline: auto;
-  /* overflow: hidden; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: aqua;
-  gap: 50px;
-  position: relative;
+  background-color: rgb(247, 248, 248);
+  width: 50%;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 1px 0px 14px 1px rgba(0,0,0,0.75);
+  gap: 20px;
 }
 .datePickerView{
   display: flex;
+  justify-content: space-between;
+  width: 80%;
 }
 .datePicker{
   border: 1px solid;
@@ -27,7 +35,7 @@
   align-items: center;
 }
 .toDate{
-  margin-left: 100px;
+  /* margin-left: 100px; */
   display: flex;
   align-items: center;
 }
@@ -54,11 +62,37 @@
   height: 50px;
   width: 150px;
   border-radius: 5px;
-  background-color: rgb(44, 43, 43);
+  background-color: aqua;
   color: white;
+  border: none;
+  cursor: pointer;
+}
+.exportButton:hover{
+  box-shadow: 1px 0px 14px 1px rgba(0,0,0,0.2);
 }
 .progressView{
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 50%;
+}
+
+@media all and (max-width:520px){
+.datePickerView{
+  flex-direction: column;
+  align-content: center;
+}
+.fromData{
+  flex-direction: column;
+}
+.toDate{
+  flex-direction: column;
+}
+.progressView{
+  width: 100%;
+}
+.progressView > h3{
+  font-size: 12px;
+  text-align: center
+}
 }

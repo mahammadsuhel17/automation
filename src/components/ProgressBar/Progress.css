@@ -1,0 +1,24 @@
+.Parentdiv {
+    height: 30px;
+    width: 100%;
+    border-radius: 15px;
+    background-color: lightgray;
+    display: flex;
+
+
+}
+
+.Childdiv {
+    height: 100%;
+    border-radius: 40px;
+    padding-inline: 10px;
+    background-color: aqua;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.progresstext {
+    color: black;
+    font-weight: 500;
+}
