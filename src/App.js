@@ -17,6 +17,12 @@ const App = () => {
   const [completedFiles, setcompletedFiles] = useState(null)
   const [totalFiles, setTotalFiles] = useState(0)
 
+  const getDate = (date) =>{
+    const currentDate = new Date(date);
+    const nextDay = new Date(currentDate);
+    nextDay.setDate(currentDate.getDate() + 1);
+    return nextDay
+  }
 
   const handleFileSelect = async (e) => {
     const files = e.target.files;
@@ -38,39 +44,42 @@ const App = () => {
         const file = files[i];
         try {
           const data = await readFileAsync(file);
-          const workbook = XLSX.read(data, { type: 'binary' });
+          const workbook = XLSX.read(data, { type: 'binary', cellDates:true });
           // Assuming you want to convert the first sheet to JSON
           const sheetName = workbook.SheetNames;
           // looping the sheets in the single sheet so that we can get only TOTAL sheet data
           await sheetName.forEach(async (sheetName) => {
             if (sheetName === "TOTAL") {
-              const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
-                raw: false, // Interpret dates as JavaScript dates
-                dateNF: new Date(), // Format for parsing dates (adjust as needed)
-              });
+              const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
               const data1 = []
+
               const startDateOld = new Date(moment(fromDate).format('yyyy-MM-DD')); // October 1, 2023
-              const endDate = new Date(moment(toDate).format('yyyy-MM-DD'));
+              const endDate = moment(toDate).format('yyyy-MM-DD')
 
               const oneDayMilliseconds = 24 * 60 * 60 * 1000; // 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
-              const startDate = new Date(startDateOld - oneDayMilliseconds);
+              const startDate = moment(fromDate).format('yyyy-MM-DD')
 
-              // console.log("sheetData==>", typeof(startDate), endDate, sd);
               await sheetData.map(async (val) => {
                 if (val?.Date && val?.Date !== "Total" && val[" Adjusted Billable Spend "] && val[" Adjusted Profit "]) {
-                  const itemDateParts = val?.Date.split('-');
-                  const itemYear = new Date(fromDate).getFullYear()
-                  const itemMonth = itemDateParts[1].toLowerCase(); // Convert to lowercase for consistency
-                  const itemDay = parseInt(itemDateParts[0]);
+                  const currentDate = new Date(val?.Date);
+                  const nextDay = new Date(currentDate);
+                  nextDay.setDate(currentDate.getDate() + 1);
+                  // console.log("sheetData==>", nextDay);
+                  // const itemDateParts = val?.Date.split('-');
+                  // const itemMonth = itemDateParts[1].toLowerCase(); // Convert to lowercase for consistency
+                  // const itemDay = parseInt(itemDateParts[0]);
 
-                  const itemJavaScriptDate = new Date(`${itemYear}-${itemMonth}-${itemDay}`);
+                  // const itemJavaScriptDate = new Date(`${itemYear}-${itemMonth}-${itemDay}`);
+                  // new Date(moment(toDate).format('yyyy-MM-DD'))
+                  const itemJavaScriptDate = moment(nextDay).format('yyyy-MM-DD') ;
+                  console.log("itemJavaScriptDate==>", itemJavaScriptDate, startDate, endDate);
                   // console.log("itemJavaScriptDate", itemJavaScriptDate, startDate);
                   // console.log("itemJavaScriptDate", itemYear, itemDateParts, `2023-${itemMonth}-${itemDay}`);
                   if (itemJavaScriptDate >= startDate && itemJavaScriptDate <= endDate) {
-                    console.log("itemJavaScriptDate", moment(new Date(val?.Date)).format("DD-MMM"));
+                    console.log("sheetData==>", val?.Date);
                     const finelData = {
                       "Spend Sheet Name": file?.name,
-                      "Date": moment(new Date(val?.Date)).format("DD-MMM"),
+                      "Date": moment(itemJavaScriptDate).format("DD-MMM"),
                       "Adjusted Billable Spend": val[" Adjusted Billable Spend "],
                       "Adjusted Profit": val[" Adjusted Profit "]
                     }
@@ -96,6 +105,7 @@ const App = () => {
         }
       }
       // Set the array of converted JSON data in state
+      console.log("convertedDataArray", [].concat(...convertedDataArray));
       setExcelData([].concat(...convertedDataArray));
       setShowExportButton(true)
     }
